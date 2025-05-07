@@ -105,8 +105,6 @@ function saveToSheets(data) {
     mode: "no-cors",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data)
-  }).then(() => {
-    alert("已儲存至 Google Sheets！");
   });
 }
     
