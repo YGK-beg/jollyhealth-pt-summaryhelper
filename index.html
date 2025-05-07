@@ -99,6 +99,17 @@ function getBasicData(title) {
     return input?.value || "";
 }
 
+function saveToSheets(data) {
+  fetch("https://script.google.com/macros/s/AKfycbww-xgBPVb0vj8xuXXXtFPs7WAV9MmUeGCApyWRtdlXqjafIi-tJQBlN7KZV_QWLSemRw/exec", {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  }).then(() => {
+    alert("已儲存至 Google Sheets！");
+  });
+}
+    
 function generate() {
     const g = t => getSectionText(t);
 
@@ -149,6 +160,29 @@ function generate() {
     result += `建議預約${suggest.join('、')}持續處理，目前${therapist}老師有空檔的時間`;
 
     document.getElementById('output').value = result;
+
+    const saveData = {
+  client, therapist, date, firstTime,
+  mainComplaint: g('客戶主訴')?.join('、') || "",
+  staticEval: g('靜態評估')?.join('、') || "",
+  dynamicLimit: g('活動度不足')?.join('、') || "",
+  dynamicStrength: g('肌耐力不足/功能失常')?.join('、') || "",
+  fascia: g('緊繃筋膜')?.join('、') || "",
+  relax: g('本次放鬆')?.join('、') || "",
+  stretch: g('本次伸展')?.join('、') || "",
+  train: g('本次訓練')?.join('、') || "",
+  special: g('其他處理')?.join('、') || "",
+  homeYoga: g('回家功課-瑜珈伸展')?.join('、') || "",
+  homeTrain: g('回家功課-訓練')?.join('、') || "",
+  homeOther: g('回家功課-其他')?.join('、') || "",
+  otherSuggest: g('其他建議')?.join('、') || "",
+  planSuggest: g('建議處理時間')?.join('、') || "",
+  output: document.getElementById('output').value
+};
+
+saveToSheets(saveData);
+
+    
 }
 
 function copyText() {
