@@ -92,6 +92,27 @@ function getSectionText(title) {
     return result.length > 0 ? result : null;
 }
 
+function getSectionTextForPlan() {
+    const section = [...document.querySelectorAll('h2')].find(h2 => h2.textContent === "建議處理時間").nextElementSibling;
+    const items = [...section.querySelectorAll('.item')];
+    const result = [];
+
+    items.forEach(item => {
+        const checkbox = item.querySelector('input[type="checkbox"]');
+        const text = item.querySelector('input[type="text"]');
+        
+        if (checkbox.checked) {
+            if (checkbox.value === "其他") {
+                if (text.value.trim() !== "") result.push(text.value.trim());
+            } else {
+                result.push(text.value.trim() !== "" ? `${checkbox.value}（${text.value.trim()}）` : checkbox.value);
+            }
+        }
+    });
+
+    return result.length > 0 ? result : null;
+}
+    
 function getBasicData(title) {
     const section = [...document.querySelectorAll('h2')].find(h2 => h2.textContent === "基本資料").nextElementSibling;
     const items = [...section.querySelectorAll('.item')];
@@ -115,7 +136,7 @@ function generate() {
     const therapist = getBasicData("物理治療師名稱");
     const date = getBasicData("服務日期");
     const firstTime = getBasicData("是否為第一次服務");
-    const suggest = g('建議處理時間');
+    const suggest = getSectionTextForPlan();
 
     if (!client || !therapist || !date || !firstTime) {
         alert("【基本資料】為必填，請完整填寫！");
