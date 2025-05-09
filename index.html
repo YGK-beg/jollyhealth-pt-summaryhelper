@@ -1,39 +1,77 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>揪你健康 服務紀錄產生器（區塊化版本）</title>
-<style>
-body { font-family: Arial, sans-serif; padding: 20px; line-height: 1.6; max-width: 600px; margin: auto; }
-.block-title { margin-top: 30px; cursor: pointer; background: #ccc; padding: 12px; font-size: 18px; font-weight: bold; }
-h3 { margin-top: 20px; cursor: pointer; background: #eee; padding: 10px; font-size: 16px; }
-.section, .block-section { margin-bottom: 20px; }
-.item { margin-bottom: 12px; display: flex; align-items: center; flex-wrap: wrap; }
-.item label { flex: 1 1 120px; }
-.item input[type="text"], .item input[type="date"], .item select { flex: 2 1 200px; margin-left: 5px; }
-textarea { width: 100%; height: 200px; }
-button { margin: 10px 0; padding: 10px 20px; width: 100%; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>揪你健康 服務紀錄產生器（區塊化版本）</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; line-height: 1.6; max-width: 600px; margin: auto; }
+    .block-title { margin-top: 30px; cursor: pointer; background: #ccc; padding: 12px; font-size: 18px; font-weight: bold; }
+    h3 { margin-top: 20px; cursor: pointer; background: #eee; padding: 10px; font-size: 16px; }
+    .section, .block-section { margin-bottom: 20px; }
+    .item { margin-bottom: 12px; display: flex; align-items: center; flex-wrap: wrap; }
+    .item label { flex: 1 1 120px; }
+    .item input[type="text"], .item input[type="date"], .item select { flex: 2 1 200px; margin-left: 5px; }
+    textarea { width: 100%; height: 200px; }
+    button { margin: 10px 0; padding: 10px 20px; width: 100%; }
+  </style>
 </head>
 <body>
 
 <h1>揪你健康 服務紀錄產生器</h1>
-
 <div id="form"></div>
-
 <button onclick="generate()">產生文案</button>
 <button onclick="copyText()">複製文案</button>
-
 <h2>生成文案</h2>
 <textarea id="output"></textarea>
 
 <script>
-const requiredSections = ["基本資料", "客戶主訴", "建議處理時間"];
-
-const blocks = [...]; // 省略 blocks 定義，保持原結構
-
+const requiredSections = ["建議處理時間", "基本資料", "客戶主訴"];
 const form = document.getElementById("form");
+const blocks = [
+  {
+    title: "基本資料",
+    sections: [
+      ["基本資料", ["客戶名稱", "物理治療師名稱", "服務日期", "是否為第一次服務"]]
+    ]
+  },
+  {
+    title: "主訴與評估",
+    sections: [
+      ["客戶主訴", ["頸部", "背部", "腰部", "腹部", "肩膀", "手肘", "手腕", "髖", "膝", "踝", "其他"]],
+      ["靜態評估", ["脖子前傾", "高低肩", "駝背", "腰椎前凸", "脊柱側彎", "骨盆前傾", "骨盆後傾", "長短腳", "膝內翻", "膝外翻", "足內翻", "足外翻", "扁平足", "高弓足", "其他"]],
+      ["活動度不足", ["頸部", "背部", "腰部", "腹部", "肩膀", "手肘", "手腕", "髖", "膝", "踝", "其他"]],
+      ["肌耐力不足/功能失常", ["頸部", "背部", "腰部", "腹部", "肩膀", "手肘", "手腕", "髖", "膝", "踝", "其他"]],
+      ["緊繃筋膜", ["頸部", "背部", "腰部", "腹部", "肩膀", "手肘", "手腕", "髖", "膝", "踝", "其他"]]
+    ]
+  },
+  {
+    title: "本次處理",
+    sections: [
+      ["本次放鬆", ["肩頸筋膜", "胸腰筋膜", "手臂筋膜", "腹部筋膜", "大腿前側", "大腿後側", "大腿內側", "大腿外側", "小腿前側", "小腿後側", "臀部筋膜", "膝關節", "足底", "其他"]],
+      ["本次伸展", ["肩頸筋膜", "胸腰筋膜", "手臂筋膜", "腹部筋膜", "大腿前側", "大腿後側", "大腿內側", "大腿外側", "小腿前側", "小腿後側", "臀部筋膜", "膝關節", "足底", "其他"]],
+      ["本次訓練", ["頸深肌群", "腹部核心", "骨盆底肌", "深臀肌群", "大腿前側", "大腿後側", "小腿前側", "小腿後側", "其他"]],
+      ["其他處理", ["內臟筋膜鬆動", "神經鬆動", "其他"]]
+    ]
+  },
+  {
+    title: "回家功課",
+    sections: [
+      ["回家功課-瑜珈伸展", ["肩頸筋膜", "胸腰筋膜", "手臂筋膜", "腹部筋膜", "大腿前側", "大腿後側", "大腿內側", "大腿外側", "小腿前側", "小腿後側", "臀部筋膜", "膝關節", "足底", "其他"]],
+      ["回家功課-訓練", ["頸深肌群", "腹部核心", "骨盆底肌", "深臀肌群", "大腿前側", "大腿後側", "小腿前側", "小腿後側", "其他"]],
+      ["回家功課-其他", ["姿態矯正", "神經動態伸展", "呼吸訓練", "平衡訓練", "其他"]]
+    ]
+  },
+  {
+    title: "後續規劃",
+    sections: [
+      ["建議處理時間", ["一週內", "兩週內", "一個月內", "其他"]],
+      ["其他建議", ["鞋墊建議", "轉介醫師", "其他"]]
+    ]
+  }
+];
+
+  const form = document.getElementById("form");
 
 blocks.forEach(block => {
   const blockTitle = document.createElement("div");
@@ -43,7 +81,6 @@ blocks.forEach(block => {
 
   const blockSection = document.createElement("div");
   blockSection.className = "block-section";
-  blockSection.style.display = "block"; // 所有區塊預設展開
   form.appendChild(blockSection);
 
   blockTitle.onclick = () => {
@@ -55,7 +92,6 @@ blocks.forEach(block => {
     h3.textContent = sectionTitle;
     const sectionDiv = document.createElement("div");
     sectionDiv.className = "section";
-    sectionDiv.style.display = requiredSections.includes(sectionTitle) ? "block" : "none";
     h3.onclick = () => {
       sectionDiv.style.display = sectionDiv.style.display === "none" ? "block" : "none";
     };
@@ -68,14 +104,14 @@ blocks.forEach(block => {
 
       if (block.title === "基本資料") {
         if (item === "服務日期") {
-          div.innerHTML = `<label>${item}</label><input type="date">`;
+          div.innerHTML = <label>${item}</label><input type="date">;
         } else if (item === "是否為第一次服務") {
-          div.innerHTML = `<label>${item}</label><select><option>是</option><option>否</option></select>`;
+          div.innerHTML = <label>${item}</label><select><option>是</option><option>否</option></select>;
         } else {
-          div.innerHTML = `<label>${item}</label><input type="text">`;
+          div.innerHTML = <label>${item}</label><input type="text">;
         }
       } else {
-        div.innerHTML = `<label><input type="checkbox" value="${item}"> ${item}</label> <input type="text" placeholder="補充（可不填）">`;
+        div.innerHTML = <label><input type="checkbox" value="${item}"> ${item}</label> <input type="text" placeholder="補充（可不填）">;
         div.querySelector('input[type="checkbox"]').addEventListener('change', (e) => {
           div.querySelector('input[type="text"]').style.display = e.target.checked ? 'inline-block' : 'none';
         });
@@ -85,26 +121,28 @@ blocks.forEach(block => {
     });
   });
 });
-
+  
 function getSectionText(title) {
-  const section = [...document.querySelectorAll('h3')].find(h3 => h3.textContent === title)?.nextElementSibling;
-  if (!section) return null;
+  const h3s = [...document.querySelectorAll("h3")];
+  const h3 = h3s.find(h => h.textContent === title);
+  if (!h3) return null;
+  const section = h3.nextElementSibling;
   const items = [...section.querySelectorAll('.item')];
   const result = items.filter(i => i.querySelector('input[type="checkbox"]')?.checked)
-                      .map(i => {
-                        const val = i.querySelector('input[type="checkbox"]').value;
-                        const note = i.querySelector('input[type="text"]').value.trim();
-                        return note ? `${val}（${note}）` : val;
-                      });
+    .map(i => {
+      const val = i.querySelector('input[type="checkbox"]').value;
+      const note = i.querySelector('input[type="text"]').value.trim();
+      return note ? `${val}（${note}）` : val;
+    });
   return result.length > 0 ? result : null;
 }
 
 function getSectionTextForPlan() {
-  const section = [...document.querySelectorAll('h3')].find(h3 => h3.textContent === "建議處理時間")?.nextElementSibling;
-  if (!section) return null;
-  const items = [...section.querySelectorAll('.item')];
+  const h3s = [...document.querySelectorAll("h3")];
+  const h3 = h3s.find(h => h.textContent === "建議處理時間");
+  const section = h3.nextElementSibling;
   const result = [];
-  items.forEach(item => {
+  [...section.querySelectorAll(".item")].forEach(item => {
     const checkbox = item.querySelector('input[type="checkbox"]');
     const text = item.querySelector('input[type="text"]');
     if (checkbox.checked) {
@@ -119,24 +157,16 @@ function getSectionTextForPlan() {
 }
 
 function getBasicData(title) {
-  const section = [...document.querySelectorAll('h3')].find(h3 => h3.textContent === "基本資料")?.nextElementSibling;
+  const h3s = [...document.querySelectorAll("h3")];
+  const h3 = h3s.find(h => h.textContent === "基本資料");
+  const section = h3.nextElementSibling;
   const items = [...section.querySelectorAll('.item')];
   const input = items.find(i => i.querySelector('label').textContent === title)?.querySelector('input, select');
   return input?.value || "";
 }
 
-function saveToSheets(data) {
-  fetch("https://script.google.com/macros/s/AKfycbww-xgBPVb0vj8xuXXXtFPs7WAV9MmUeGCApyWRtdlXqjafIi-tJQBlN7KZV_QWLSemRw/exec", {
-    method: "POST",
-    mode: "no-cors",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data)
-  });
-}
-
 function generate() {
   const g = t => getSectionText(t);
-
   const client = getBasicData("客戶名稱");
   const therapist = getBasicData("物理治療師名稱");
   const date = getBasicData("服務日期");
@@ -147,14 +177,12 @@ function generate() {
     alert("【基本資料】為必填，請完整填寫！");
     return;
   }
-
   if (!suggest) {
     alert("請勾選【建議處理時間】！");
     return;
   }
 
   let result = `${client}您好～我是物理治療師${therapist}，本次${date}處理的重點～\n`;
-
   if (g('客戶主訴')) result += `🔺 ${g('客戶主訴').join('、')}\n\n`;
 
   const summary = [];
@@ -178,12 +206,10 @@ function generate() {
   if (home.length) result += `🔺 回家運動：\n${home.join('\n')}\n\n`;
 
   result += `🔺 其他建議：\n回家多補充水分、B群加強代謝，緩解不適。\n🙌 跟您分享最新的活動，喜歡我們的服務也歡迎介紹給親朋好友，每介紹一位即可得【250元折抵金！】\n`;
-
   if (g('其他建議')) result += `(p.s. ${g('其他建議').join('、')})\n`;
+  result += `建議預約${suggest.join('、')}持續處理，目前${therapist}老師有空檔的時間是：`;
 
-  result += `建議預約${suggest.join('、')}持續處理，目前${therapist}老師有空檔的時間`;
-
-  document.getElementById('output').value = result;
+  document.getElementById("output").value = result;
 
   const saveData = {
     client, therapist, date, firstTime,
@@ -200,10 +226,9 @@ function generate() {
     homeTrain: g('回家功課-訓練')?.join('、') || "",
     homeOther: g('回家功課-其他')?.join('、') || "",
     otherSuggest: g('其他建議')?.join('、') || "",
-    planSuggest: g('建議處理時間')?.join('、') || "",
-    output: document.getElementById('output').value
+    planSuggest: suggest?.join('、') || "",
+    output: result
   };
-
   saveToSheets(saveData);
 }
 
@@ -212,6 +237,15 @@ function copyText() {
   textArea.select();
   document.execCommand('copy');
   alert("已複製到剪貼簿！");
+}
+
+function saveToSheets(data) {
+  fetch("https://script.google.com/macros/s/AKfycbww-xgBPVb0vj8xuXXXtFPs7WAV9MmUeGCApyWRtdlXqjafIi-tJQBlN7KZV_QWLSemRw/exec", {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  });
 }
 </script>
 
