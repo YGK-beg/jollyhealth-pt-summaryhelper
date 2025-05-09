@@ -90,10 +90,8 @@ blocks.forEach(block => {
   };
 
   block.sections.forEach(section => {
-  let sectionTitle, items;
+  let sectionTitle, items;// 若為基本資料區塊（不是二層陣列）
 
-  // 若為基本資料區塊（不是二層陣列）
-  let sectionTitle, items;
 
   // 檢查是否為基本資料（只有一層，不需要 sectionTitle）
   if (block.title === "基本資料" && !Array.isArray(section[0])) {
