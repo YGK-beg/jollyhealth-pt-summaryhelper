@@ -82,6 +82,7 @@ blocks.forEach(block => {
 
   const blockSection = document.createElement("div");
   blockSection.className = "block-section";
+  blockSection.style.display = "block"; // 讓所有區塊預設展開
   form.appendChild(blockSection);
 
   blockTitle.onclick = () => {
@@ -93,6 +94,9 @@ blocks.forEach(block => {
     h3.textContent = sectionTitle;
     const sectionDiv = document.createElement("div");
     sectionDiv.className = "section";
+    sectionDiv.style.display = "none"; // <- 你要加這一行
+    const requiredSections = ["建議處理時間","基本資料","客戶主訴"]; // 指定預設展開的「大題名稱」
+sectionDiv.style.display = requiredSections.includes(sectionTitle) ? "block" : "none";
     h3.onclick = () => {
       sectionDiv.style.display = sectionDiv.style.display === "none" ? "block" : "none";
     };
