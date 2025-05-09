@@ -3,11 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>揪你健康 服務紀錄產生器</title>
+<title>揪你健康 服務紀錄產生器（區塊化版本）</title>
 <style>
 body { font-family: Arial, sans-serif; padding: 20px; line-height: 1.6; max-width: 600px; margin: auto; }
-h2 { margin-top: 30px; cursor: pointer; background: #eee; padding: 10px; }
-.section { margin-bottom: 30px; display: none; }
+.block-title { margin-top: 30px; cursor: pointer; background: #ccc; padding: 12px; font-size: 18px; font-weight: bold; }
+h3 { margin-top: 20px; cursor: pointer; background: #eee; padding: 10px; font-size: 16px; }
+.section, .block-section { display: none; margin-bottom: 20px; }
 .item { margin-bottom: 12px; display: flex; align-items: center; flex-wrap: wrap; }
 .item label { flex: 1 1 120px; }
 .item input[type="text"], .item input[type="date"], .item select { flex: 2 1 200px; margin-left: 5px; }
@@ -28,56 +29,98 @@ button { margin: 10px 0; padding: 10px 20px; width: 100%; }
 <textarea id="output"></textarea>
 
 <script>
-const sections = [
-    ["基本資料", ["客戶名稱", "物理治療師名稱", "服務日期", "是否為第一次服務"]],
-    ["客戶主訴", ["頸部", "背部", "腰部", "腹部", "肩膀", "手肘", "手腕", "髖", "膝", "踝", "其他"]],
-    ["靜態評估", ["脖子前傾", "高低肩", "駝背", "腰椎前凸", "脊柱側彎", "骨盆前傾", "骨盆後傾", "長短腳", "膝內翻", "膝外翻", "足內翻", "足外翻", "扁平足", "高弓足", "其他"]],
-    ["活動度不足", ["頸部", "背部", "腰部", "腹部", "肩膀", "手肘", "手腕", "髖", "膝", "踝", "其他"]],
-    ["肌耐力不足/功能失常", ["頸部", "背部", "腰部", "腹部", "肩膀", "手肘", "手腕", "髖", "膝", "踝", "其他"]],
-    ["緊繃筋膜", ["頸部", "背部", "腰部", "腹部", "肩膀", "手肘", "手腕", "髖", "膝", "踝", "其他"]],
-    ["本次放鬆", ["肩頸筋膜", "胸腰筋膜", "手臂筋膜", "腹部筋膜", "大腿前側", "大腿後側", "大腿內側", "大腿外側", "小腿前側", "小腿後側", "臀部筋膜", "膝關節", "足底", "其他"]],
-    ["本次伸展", ["肩頸筋膜", "胸腰筋膜", "手臂筋膜", "腹部筋膜", "大腿前側", "大腿後側", "大腿內側", "大腿外側", "小腿前側", "小腿後側", "臀部筋膜", "膝關節", "足底", "其他"]],
-    ["本次訓練", ["頸深肌群", "腹部核心", "骨盆底肌", "深臀肌群", "大腿前側", "大腿後側", "小腿前側", "小腿後側", "其他"]],
-    ["其他處理", ["內臟筋膜鬆動", "神經鬆動", "其他"]],
-    ["回家功課-瑜珈伸展", ["肩頸筋膜", "胸腰筋膜", "手臂筋膜", "腹部筋膜", "大腿前側", "大腿後側", "大腿內側", "大腿外側", "小腿前側", "小腿後側", "臀部筋膜", "膝關節", "足底", "其他"]],
-    ["回家功課-訓練", ["頸深肌群", "腹部核心", "骨盆底肌", "深臀肌群", "大腿前側", "大腿後側", "小腿前側", "小腿後側", "其他"]],
-    ["回家功課-其他", ["姿態矯正", "神經動態伸展", "呼吸訓練", "平衡訓練", "其他"]],
-    ["建議處理時間", ["一週內", "兩週內", "一個月內", "其他"]],
-    ["其他建議", ["鞋墊建議", "轉介醫師", "其他"]]
+const blocks = [
+  {
+    title: "基本資料",
+    sections: [
+      ["基本資料", ["客戶名稱", "物理治療師名稱", "服務日期", "是否為第一次服務"]]
+    ]
+  },
+  {
+    title: "主訴與評估",
+    sections: [
+      ["客戶主訴", ["頸部", "背部", "腰部", "腹部", "肩膀", "手肘", "手腕", "髖", "膝", "踝", "其他"]],
+      ["靜態評估", ["脖子前傾", "高低肩", "駝背", "腰椎前凸", "脊柱側彎", "骨盆前傾", "骨盆後傾", "長短腳", "膝內翻", "膝外翻", "足內翻", "足外翻", "扁平足", "高弓足", "其他"]],
+      ["活動度不足", ["頸部", "背部", "腰部", "腹部", "肩膀", "手肘", "手腕", "髖", "膝", "踝", "其他"]],
+      ["肌耐力不足/功能失常", ["頸部", "背部", "腰部", "腹部", "肩膀", "手肘", "手腕", "髖", "膝", "踝", "其他"]],
+      ["緊繃筋膜", ["頸部", "背部", "腰部", "腹部", "肩膀", "手肘", "手腕", "髖", "膝", "踝", "其他"]]
+    ]
+  },
+  {
+    title: "本次處理",
+    sections: [
+      ["本次放鬆", ["肩頸筋膜", "胸腰筋膜", "手臂筋膜", "腹部筋膜", "大腿前側", "大腿後側", "大腿內側", "大腿外側", "小腿前側", "小腿後側", "臀部筋膜", "膝關節", "足底", "其他"]],
+      ["本次伸展", ["肩頸筋膜", "胸腰筋膜", "手臂筋膜", "腹部筋膜", "大腿前側", "大腿後側", "大腿內側", "大腿外側", "小腿前側", "小腿後側", "臀部筋膜", "膝關節", "足底", "其他"]],
+      ["本次訓練", ["頸深肌群", "腹部核心", "骨盆底肌", "深臀肌群", "大腿前側", "大腿後側", "小腿前側", "小腿後側", "其他"]],
+      ["其他處理", ["內臟筋膜鬆動", "神經鬆動", "其他"]]
+    ]
+  },
+  {
+    title: "回家功課",
+    sections: [
+      ["回家功課-瑜珈伸展", ["肩頸筋膜", "胸腰筋膜", "手臂筋膜", "腹部筋膜", "大腿前側", "大腿後側", "大腿內側", "大腿外側", "小腿前側", "小腿後側", "臀部筋膜", "膝關節", "足底", "其他"]],
+      ["回家功課-訓練", ["頸深肌群", "腹部核心", "骨盆底肌", "深臀肌群", "大腿前側", "大腿後側", "小腿前側", "小腿後側", "其他"]],
+      ["回家功課-其他", ["姿態矯正", "神經動態伸展", "呼吸訓練", "平衡訓練", "其他"]]
+    ]
+  },
+  {
+    title: "後續規劃",
+    sections: [
+      ["建議處理時間", ["一週內", "兩週內", "一個月內", "其他"]],
+      ["其他建議", ["鞋墊建議", "轉介醫師", "其他"]]
+    ]
+  }
 ];
 
-const form = document.getElementById('form');
-sections.forEach(([title, items]) => {
-    const h2 = document.createElement('h2');
-    h2.textContent = title;
-    h2.onclick = () => section.style.display = section.style.display === 'none' ? 'block' : 'none';
-    form.appendChild(h2);
-    const section = document.createElement('div');
-    section.className = 'section';
+const form = document.getElementById("form");
+
+blocks.forEach(block => {
+  const blockTitle = document.createElement("div");
+  blockTitle.className = "block-title";
+  blockTitle.textContent = block.title;
+  form.appendChild(blockTitle);
+
+  const blockSection = document.createElement("div");
+  blockSection.className = "block-section";
+  form.appendChild(blockSection);
+
+  blockTitle.onclick = () => {
+    blockSection.style.display = blockSection.style.display === "none" ? "block" : "none";
+  };
+
+  block.sections.forEach(([sectionTitle, items]) => {
+    const h3 = document.createElement("h3");
+    h3.textContent = sectionTitle;
+    const sectionDiv = document.createElement("div");
+    sectionDiv.className = "section";
+    h3.onclick = () => {
+      sectionDiv.style.display = sectionDiv.style.display === "none" ? "block" : "none";
+    };
+    blockSection.appendChild(h3);
+    blockSection.appendChild(sectionDiv);
 
     items.forEach(item => {
-        const div = document.createElement('div');
-        div.className = 'item';
+      const div = document.createElement("div");
+      div.className = "item";
 
-        if (title === "基本資料") {
-            if (item === "服務日期") {
-                div.innerHTML = `<label>${item}</label><input type="date">`;
-            } else if (item === "是否為第一次服務") {
-                div.innerHTML = `<label>${item}</label><select><option>是</option><option>否</option></select>`;
-            } else {
-                div.innerHTML = `<label>${item}</label><input type="text">`;
-            }
+      if (block.title === "基本資料") {
+        if (item === "服務日期") {
+          div.innerHTML = `<label>${item}</label><input type="date">`;
+        } else if (item === "是否為第一次服務") {
+          div.innerHTML = `<label>${item}</label><select><option>是</option><option>否</option></select>`;
         } else {
-            div.innerHTML = `<label><input type="checkbox" value="${item}"> ${item}</label> <input type="text" placeholder="補充（可不填）">`;
-            div.querySelector('input[type="checkbox"]').addEventListener('change', (e) => {
-                div.querySelector('input[type="text"]').style.display = e.target.checked ? 'inline-block' : 'none';
-            });
+          div.innerHTML = `<label>${item}</label><input type="text">`;
         }
+      } else {
+        div.innerHTML = `<label><input type="checkbox" value="${item}"> ${item}</label> <input type="text" placeholder="補充（可不填）">`;
+        div.querySelector('input[type="checkbox"]').addEventListener('change', (e) => {
+          div.querySelector('input[type="text"]').style.display = e.target.checked ? 'inline-block' : 'none';
+        });
+      }
 
-        section.appendChild(div);
+      sectionDiv.appendChild(div);
     });
-
-    form.appendChild(section);
+  });
 });
 
 function getSectionText(title) {
