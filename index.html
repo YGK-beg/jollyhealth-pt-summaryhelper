@@ -32,9 +32,7 @@ button { margin: 10px 0; padding: 10px 20px; width: 100%; }
 const blocks = [
   {
     title: "基本資料",
-    sections: [
-       ["客戶名稱", "物理治療師名稱", "服務日期", "是否為第一次服務"]
-    ]
+    sections: ["客戶名稱", "物理治療師名稱", "服務日期", "是否為第一次服務"]
   },
   {
     title: "主訴與評估",
@@ -89,17 +87,57 @@ blocks.forEach(block => {
     blockSection.style.display = blockSection.style.display === "none" ? "block" : "none";
   };
 
-  block.sections.forEach(section => {
-  let sectionTitle, items;// 若為基本資料區塊（不是二層陣列）
+ if (block.title === "基本資料") {
+  // 單一區塊處理所有 item
+  const sectionDiv = document.createElement("div");
+  sectionDiv.className = "section";
+  sectionDiv.style.display = "block";
 
+  block.sections.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "item";
 
-  // 檢查是否為基本資料（只有一層，不需要 sectionTitle）
-  if (block.title === "基本資料" && !Array.isArray(section[0])) {
-    sectionTitle = null;
-    items = section;
-  } else {
-    [sectionTitle, items] = section;
-  }
+    if (item === "服務日期") {
+      div.innerHTML = `<label>${item}</label><input type="date">`;
+    } else if (item === "是否為第一次服務") {
+      div.innerHTML = `<label>${item}</label><select><option>是</option><option>否</option></select>`;
+    } else {
+      div.innerHTML = `<label>${item}</label><input type="text">`;
+    }
+
+    sectionDiv.appendChild(div);
+  });
+
+  blockSection.appendChild(sectionDiv);
+} else {
+  // 原本邏輯處理其他 sections
+  block.sections.forEach(([sectionTitle, items]) => {
+    const sectionDiv = document.createElement("div");
+    sectionDiv.className = "section";
+
+    const requiredSections = ["建議處理時間", "客戶主訴"];
+    sectionDiv.style.display = requiredSections.includes(sectionTitle) ? "block" : "none";
+
+    const h3 = document.createElement("h3");
+    h3.textContent = sectionTitle;
+    h3.onclick = () => {
+      sectionDiv.style.display = sectionDiv.style.display === "none" ? "block" : "none";
+    };
+
+    blockSection.appendChild(h3);
+    blockSection.appendChild(sectionDiv);
+
+    items.forEach(item => {
+      const div = document.createElement("div");
+      div.className = "item";
+      div.innerHTML = `<label><input type="checkbox" value="${item}"> ${item}</label> <input type="text" placeholder="補充（可不填）">`;
+      div.querySelector('input[type="checkbox"]').addEventListener('change', (e) => {
+        div.querySelector('input[type="text"]').style.display = e.target.checked ? 'inline-block' : 'none';
+      });
+      sectionDiv.appendChild(div);
+    });
+  });
+}
 
   const sectionDiv = document.createElement("div");
   sectionDiv.className = "section";
