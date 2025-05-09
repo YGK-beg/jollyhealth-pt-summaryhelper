@@ -95,7 +95,7 @@ blocks.forEach(block => {
     const sectionDiv = document.createElement("div");
     sectionDiv.className = "section";
 
-    const requiredSections = ["建議處理時間", "基本資料", "客戶主訴"];
+    const requiredSections = ["建議處理時間(必填)", "基本資料", "客戶主訴"];
     sectionDiv.style.display = requiredSections.includes(sectionTitle) ? "block" : "none";
 
     h3.onclick = () => {
@@ -142,7 +142,7 @@ function getSectionText(title) {
 }
 
 function getSectionTextForPlan() {
-  return getSectionText("建議處理時間");
+  return getSectionText("建議處理時間(必填)");
 }
 
 function getBasicData(title) {
