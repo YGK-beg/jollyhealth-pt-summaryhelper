@@ -32,7 +32,9 @@ button { margin: 10px 0; padding: 10px 20px; width: 100%; }
 const blocks = [
   {
     title: "基本資料",
-    sections: ["客戶名稱", "物理治療師名稱", "服務日期", "是否為第一次服務"]
+    sections: [
+      ["基本資料", ["客戶名稱", "物理治療師名稱", "服務日期", "是否為第一次服務"]]
+    ]
   },
   {
     title: "主訴與評估",
@@ -80,105 +82,44 @@ blocks.forEach(block => {
 
   const blockSection = document.createElement("div");
   blockSection.className = "block-section";
-  blockSection.style.display = "block"; // 讓所有區塊預設展開
   form.appendChild(blockSection);
 
   blockTitle.onclick = () => {
     blockSection.style.display = blockSection.style.display === "none" ? "block" : "none";
   };
 
- if (block.title === "基本資料") {
-  // 單一區塊處理所有 item
-  const sectionDiv = document.createElement("div");
-  sectionDiv.className = "section";
-  sectionDiv.style.display = "block";
-
-  block.sections.forEach(item => {
-    const div = document.createElement("div");
-    div.className = "item";
-
-    if (item === "服務日期") {
-      div.innerHTML = `<label>${item}</label><input type="date">`;
-    } else if (item === "是否為第一次服務") {
-      div.innerHTML = `<label>${item}</label><select><option>是</option><option>否</option></select>`;
-    } else {
-      div.innerHTML = `<label>${item}</label><input type="text">`;
-    }
-
-    sectionDiv.appendChild(div);
-  });
-
-  blockSection.appendChild(sectionDiv);
-} else {
-  // 原本邏輯處理其他 sections
   block.sections.forEach(([sectionTitle, items]) => {
-    const sectionDiv = document.createElement("div");
-    sectionDiv.className = "section";
-
-    const requiredSections = ["建議處理時間", "客戶主訴"];
-    sectionDiv.style.display = requiredSections.includes(sectionTitle) ? "block" : "none";
-
     const h3 = document.createElement("h3");
     h3.textContent = sectionTitle;
+    const sectionDiv = document.createElement("div");
+    sectionDiv.className = "section";
     h3.onclick = () => {
       sectionDiv.style.display = sectionDiv.style.display === "none" ? "block" : "none";
     };
-
     blockSection.appendChild(h3);
     blockSection.appendChild(sectionDiv);
 
     items.forEach(item => {
       const div = document.createElement("div");
       div.className = "item";
-      div.innerHTML = `<label><input type="checkbox" value="${item}"> ${item}</label> <input type="text" placeholder="補充（可不填）">`;
-      div.querySelector('input[type="checkbox"]').addEventListener('change', (e) => {
-        div.querySelector('input[type="text"]').style.display = e.target.checked ? 'inline-block' : 'none';
-      });
+
+      if (block.title === "基本資料") {
+        if (item === "服務日期") {
+          div.innerHTML = <label>${item}</label><input type="date">;
+        } else if (item === "是否為第一次服務") {
+          div.innerHTML = <label>${item}</label><select><option>是</option><option>否</option></select>;
+        } else {
+          div.innerHTML = <label>${item}</label><input type="text">;
+        }
+      } else {
+        div.innerHTML = <label><input type="checkbox" value="${item}"> ${item}</label> <input type="text" placeholder="補充（可不填）">;
+        div.querySelector('input[type="checkbox"]').addEventListener('change', (e) => {
+          div.querySelector('input[type="text"]').style.display = e.target.checked ? 'inline-block' : 'none';
+        });
+      }
+
       sectionDiv.appendChild(div);
     });
-  });
-}
-
-  const sectionDiv = document.createElement("div");
-  sectionDiv.className = "section";
-
-  // 預設展開的設定
-  const requiredSections = ["建議處理時間", "客戶主訴"];
-  sectionDiv.style.display = sectionTitle && requiredSections.includes(sectionTitle) ? "block" : "none";
-  if (block.title === "基本資料") sectionDiv.style.display = "block";
-
-  // h3 標題
-  if (sectionTitle) {
-    const h3 = document.createElement("h3");
-    h3.textContent = sectionTitle;
-    h3.onclick = () => {
-      sectionDiv.style.display = sectionDiv.style.display === "none" ? "block" : "none";
-    };
-    blockSection.appendChild(h3);
-  }
-
-  blockSection.appendChild(sectionDiv);
-
-  items.forEach(item => {
-    const div = document.createElement("div");
-    div.className = "item";
-
-    if (block.title === "基本資料") {
-      if (item === "服務日期") {
-        div.innerHTML = `<label>${item}</label><input type="date">`;
-      } else if (item === "是否為第一次服務") {
-        div.innerHTML = `<label>${item}</label><select><option>是</option><option>否</option></select>`;
-      } else {
-        div.innerHTML = `<label>${item}</label><input type="text">`;
-      }
-    } else {
-      div.innerHTML = `<label><input type="checkbox" value="${item}"> ${item}</label> <input type="text" placeholder="補充（可不填）">`;
-      div.querySelector('input[type="checkbox"]').addEventListener('change', (e) => {
-        div.querySelector('input[type="text"]').style.display = e.target.checked ? 'inline-block' : 'none';
-      });
-    }
-
-    sectionDiv.appendChild(div);
   });
 });
 
@@ -189,7 +130,7 @@ function getSectionText(title) {
                                             .map(i => {
         const val = i.querySelector('input[type="checkbox"]').value;
         const note = i.querySelector('input[type="text"]').value.trim();
-        return note ? `${val}（${note}）` : val;
+        return note ? ${val}（${note}） : val;
     });
     return result.length > 0 ? result : null;
 }
@@ -207,7 +148,7 @@ function getSectionTextForPlan() {
             if (checkbox.value === "其他") {
                 if (text.value.trim() !== "") result.push(text.value.trim());
             } else {
-                result.push(text.value.trim() !== "" ? `${checkbox.value}（${text.value.trim()}）` : checkbox.value);
+                result.push(text.value.trim() !== "" ? ${checkbox.value}（${text.value.trim()}） : checkbox.value);
             }
         }
     });
@@ -250,35 +191,35 @@ function generate() {
         return;
     }
 
-    let result = `${client}您好～我是物理治療師${therapist}，本次${date}處理的重點～\n`;
+    let result = ${client}您好～我是物理治療師${therapist}，本次${date}處理的重點～\n;
 
-    if (g('客戶主訴')) result += `🔺 ${g('客戶主訴').join('、')}\n\n`;
+    if (g('客戶主訴')) result += 🔺 ${g('客戶主訴').join('、')}\n\n;
 
     const summary = [];
-    if (g('靜態評估')) summary.push(`- 靜態評估：${g('靜態評估').join('、')}`);
-    if (g('活動度不足')) summary.push(`- 活動度不足：${g('活動度不足').join('、')}`);
-    if (g('肌耐力不足/功能失常')) summary.push(`- 肌耐力不足/功能失常：${g('肌耐力不足/功能失常').join('、')}`);
-    if (g('緊繃筋膜')) summary.push(`- 緊繃筋膜：${g('緊繃筋膜').join('、')}`);
-    if (summary.length) result += `🔺 評估摘要：\n${summary.join('\n')}\n\n`;
+    if (g('靜態評估')) summary.push(- 靜態評估：${g('靜態評估').join('、')});
+    if (g('活動度不足')) summary.push(- 活動度不足：${g('活動度不足').join('、')});
+    if (g('肌耐力不足/功能失常')) summary.push(- 肌耐力不足/功能失常：${g('肌耐力不足/功能失常').join('、')});
+    if (g('緊繃筋膜')) summary.push(- 緊繃筋膜：${g('緊繃筋膜').join('、')});
+    if (summary.length) result += 🔺 評估摘要：\n${summary.join('\n')}\n\n;
 
     const process = [];
-    if (g('本次放鬆')) process.push(`- 放鬆：${g('本次放鬆').join('、')}`);
-    if (g('本次伸展')) process.push(`- 伸展：${g('本次伸展').join('、')}`);
-    if (g('本次訓練')) process.push(`- 訓練：${g('本次訓練').join('、')}`);
-    if (g('其他處理')) process.push(`- 特殊：${g('其他處理').join('、')}`);
-    if (process.length) result += `🔺 本次處理內容：\n${process.join('\n')}\n\n`;
+    if (g('本次放鬆')) process.push(- 放鬆：${g('本次放鬆').join('、')});
+    if (g('本次伸展')) process.push(- 伸展：${g('本次伸展').join('、')});
+    if (g('本次訓練')) process.push(- 訓練：${g('本次訓練').join('、')});
+    if (g('其他處理')) process.push(- 特殊：${g('其他處理').join('、')});
+    if (process.length) result += 🔺 本次處理內容：\n${process.join('\n')}\n\n;
 
     const home = [];
-    if (g('回家功課-瑜珈伸展')) home.push(`- 瑜珈伸展：${g('回家功課-瑜珈伸展').join('、')}`);
-    if (g('回家功課-訓練')) home.push(`- 肌力訓練：${g('回家功課-訓練').join('、')}`);
-    if (g('回家功課-其他')) home.push(`- 其他：${g('回家功課-其他').join('、')}`);
-    if (home.length) result += `🔺 回家運動：\n${home.join('\n')}\n\n`;
+    if (g('回家功課-瑜珈伸展')) home.push(- 瑜珈伸展：${g('回家功課-瑜珈伸展').join('、')});
+    if (g('回家功課-訓練')) home.push(- 肌力訓練：${g('回家功課-訓練').join('、')});
+    if (g('回家功課-其他')) home.push(- 其他：${g('回家功課-其他').join('、')});
+    if (home.length) result += 🔺 回家運動：\n${home.join('\n')}\n\n;
 
-    result += `🔺 其他建議：\n回家多補充水分、B群加強代謝，緩解不適。\n🙌 跟您分享最新的活動，喜歡我們的服務也歡迎介紹給親朋好友，每介紹一位即可得【250元折抵金！】\n`;
+    result += 🔺 其他建議：\n回家多補充水分、B群加強代謝，緩解不適。\n🙌 跟您分享最新的活動，喜歡我們的服務也歡迎介紹給親朋好友，每介紹一位即可得【250元折抵金！】\n;
 
-    if (g('其他建議')) result += `(p.s. ${g('其他建議').join('、')})\n`;
+    if (g('其他建議')) result += (p.s. ${g('其他建議').join('、')})\n;
 
-    result += `建議預約${suggest.join('、')}持續處理，目前${therapist}老師有空檔的時間`;
+    result += 建議預約${suggest.join('、')}持續處理，目前${therapist}老師有空檔的時間;
 
     document.getElementById('output').value = result;
 
