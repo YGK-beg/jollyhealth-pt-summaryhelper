@@ -67,7 +67,7 @@ const blocks = [
     title: "後續規劃",
     sections: [
       ["下次處理方向", ["__text__"]],
-      ["建議處理時間(必填)", ["已確定日期：","一週內", "兩週內", "一個月內", "其他"]],
+      ["建議處理時間(必填)", ["已安排：","一週後", "兩週後", "一個月後", "其他"]],
       ["其他建議", ["鞋墊建議", "轉介醫師", "其他"]]
     ]
   }
@@ -138,9 +138,14 @@ function getSectionText(title) {
   const section = h3.nextElementSibling;
   const items = [...section.querySelectorAll('.item')];
   return items.filter(i => i.querySelector('input[type="checkbox"]')?.checked).map(i => {
-    const val = i.querySelector('input[type="checkbox"]').value;
+    const checkbox = i.querySelector('input[type="checkbox"]');
+    const val = checkbox.value;
     const note = i.querySelector('input[type="text"]').value.trim();
-    return note ? `${val}（${note}）` : val;
+    if (val === "其他") {
+      return note || "其他";
+    } else {
+      return note ? `${val}（${note}）` : val;
+    }
   });
 }
 
@@ -153,7 +158,25 @@ function getFreeText(title) {
 }
   
 function getSectionTextForPlan() {
-  return getSectionText("建議處理時間(必填)");
+  const title = "建議處理時間(必填)";
+  const h3 = [...document.querySelectorAll('h3')].find(h => h.textContent === title);
+  if (!h3) return null;
+  const section = h3.nextElementSibling;
+  const items = [...section.querySelectorAll('.item')];
+
+  return items
+    .filter(i => i.querySelector('input[type="checkbox"]')?.checked)
+    .map(i => {
+      const checkbox = i.querySelector('input[type="checkbox"]');
+      const val = checkbox.value;
+      const note = i.querySelector('input[type="text"]').value.trim();
+
+      if (val === "已確定日期：" || val === "其他") {
+        return note || val; // 補充內容為主，沒填補充就保留原文字
+      } else {
+        return note ? `${val}（${note}）` : val;
+      }
+    });
 }
 
 function getBasicData(title) {
@@ -216,7 +239,7 @@ function generate() {
 
   result += `🔺 其他建議：\n回家多補充水分、B群加強代謝，緩解不適。\n🙌 跟您分享最新的活動，喜歡我們的服務也歡迎介紹給親朋好友，每介紹一位即可得【250元折抵金！】\n`;
   if (g("其他建議")) result += `(p.s. ${g("其他建議").join('、')})\n`;
-  result += `建議預約${suggest.join('、')}持續處理\n`;
+  result += `期待${suggest.join('、')}持續為您處理～\n`;
 
   document.getElementById("output").value = result;
 
