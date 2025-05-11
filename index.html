@@ -238,7 +238,9 @@ function generate() {
   if (home.length) result += `🔺 回家運動：\n${home.join('\n')}\n\n`;
 
   result += `🔺 其他建議：\n回家多補充水分、B群加強代謝，緩解不適。\n🙌 跟您分享最新的活動，喜歡我們的服務也歡迎介紹給親朋好友，每介紹一位即可得【250元折抵金！】\n`;
-  if (g("其他建議")) result += `(p.s. ${g("其他建議").join('、')})\n`;
+if (otherSuggest && otherSuggest.length > 0) {
+  result += `(p.s. ${otherSuggest.join('、')})\n`;
+}
   const nextPlan = getFreeText("下次處理方向");
   if (nextPlan) {
     result += `🔺 預計下次處理方向為：${nextPlan}\n`;
