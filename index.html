@@ -203,6 +203,7 @@ function generate() {
   const date = getBasicData("服務日期");
   const firstTime = getBasicData("是否為第一次服務");
   const suggest = getSectionTextForPlan();
+  const otherSuggest = g("其他建議"); // ← 加在 generate() 開頭的區塊中
 
   if (!client || !therapist || !date || !firstTime) {
     alert("【基本資料】為必填，請完整填寫！");
