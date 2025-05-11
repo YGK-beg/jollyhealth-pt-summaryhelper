@@ -66,6 +66,7 @@ const blocks = [
   {
     title: "後續規劃",
     sections: [
+      ["下次處理方向", ["__text__"]],
       ["建議處理時間(必填)", ["已確定日期：","一週內", "兩週內", "一個月內", "其他"]],
       ["其他建議", ["鞋墊建議", "轉介醫師", "其他"]]
     ]
@@ -117,6 +118,8 @@ blocks.forEach(block => {
         } else {
           div.innerHTML = `<label>${item}</label><input type="text">`;
         }
+      } else if (item === "__text__") {
+        div.innerHTML = `<label>請填寫：</label><input type="text">`;
       } else {
         div.innerHTML = `<label><input type="checkbox" value="${item}"> ${item}</label><input type="text" placeholder="補充（可不填）" style="display:none">`;
         div.querySelector('input[type="checkbox"]').addEventListener('change', (e) => {
@@ -141,6 +144,14 @@ function getSectionText(title) {
   });
 }
 
+function getFreeText(title) {
+  const h3 = [...document.querySelectorAll('h3')].find(h => h.textContent === title);
+  if (!h3) return "";
+  const section = h3.nextElementSibling;
+  const input = section.querySelector('input[type="text"]');
+  return input?.value?.trim() || "";
+}
+  
 function getSectionTextForPlan() {
   return getSectionText("建議處理時間(必填)");
 }
@@ -223,8 +234,9 @@ function generate() {
     homeYoga: g("伸展*")?.join("、") || "",
     homeTrain: g("訓練*")?.join("、") || "",
     homeOther: g("其他*")?.join("、") || "",
-    otherSuggest: g("其他建議")?.join("、") || "",
+    nextPlan: getFreeText("下次處理方向"),
     planSuggest: suggest.join("、"),
+    otherSuggest: g("其他建議")?.join("、") || "",
     output: result
   });
 }
