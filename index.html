@@ -171,7 +171,7 @@ function getSectionTextForPlan() {
       const val = checkbox.value;
       const note = i.querySelector('input[type="text"]').value.trim();
 
-      if (val === "已確定日期：" || val === "其他") {
+      if (val === "已安排：" || val === "其他") {
         return note || val; // 補充內容為主，沒填補充就保留原文字
       } else {
         return note ? `${val}（${note}）` : val;
