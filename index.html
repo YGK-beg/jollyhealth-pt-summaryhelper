@@ -52,7 +52,7 @@ const blocks = [
       ["放鬆", ["肩頸筋膜", "胸腰筋膜", "手臂筋膜", "腹部筋膜", "大腿前側", "大腿後側", "大腿內側", "大腿外側", "小腿前側", "小腿後側", "小腿內側", "小腿外側", "臀部筋膜", "膝關節", "足底", "其他"]],
       ["伸展", ["肩頸筋膜", "胸腰筋膜", "手臂筋膜", "腹部筋膜", "大腿前側", "大腿後側", "大腿內側", "大腿外側", "小腿前側", "小腿後側", "小腿內側", "小腿外側", "臀部筋膜", "膝關節", "足底", "其他"]],
       ["訓練", ["頸深肌群", "腹部核心", "骨盆底肌", "深臀肌群", "大腿前側", "大腿後側", "大腿內側", "大腿外側", "小腿前側", "小腿後側", "小腿內側", "小腿外側", "足底", "其他"]],
-      ["其他處理", ["貼紮","關節鬆動","內臟筋膜鬆動", "神經鬆動", "其他"]]
+      ["其他處理", ["貼紮","鬆動關節","內臟筋膜鬆動", "神經鬆動", "其他"]]
     ]
   },
   {
@@ -121,12 +121,23 @@ blocks.forEach(block => {
         }
       } else if (item === "__text__") {
         div.innerHTML = `<label>請填寫：</label><input type="text">`;
-      } else {
-        div.innerHTML = `<label><input type="checkbox" value="${item}"> ${item}</label><input type="text" placeholder="補充（可不填）" style="display:none">`;
-        div.querySelector('input[type="checkbox"]').addEventListener('change', (e) => {
-          div.querySelector('input[type="text"]').style.display = e.target.checked ? 'inline-block' : 'none';
-        });
-      }
+     } else if (item === "鬆動關節") {
+    const checkboxId = "joint-mobility-" + Math.random().toString(36).substr(2, 5);
+    div.innerHTML = `
+      <input type="checkbox" id="${checkboxId}" value="鬆動關節">
+      <label for="${checkboxId}">鬆動<input type="text" placeholder="填寫部位" style="width: 80px; display:none;">關節</label>
+    `;
+    const checkbox = div.querySelector('input[type="checkbox"]');
+    const input = div.querySelector('input[type="text"]');
+    checkbox.addEventListener('change', (e) => {
+      input.style.display = e.target.checked ? 'inline-block' : 'none';
+    });
+  } else {
+    div.innerHTML = `<label><input type="checkbox" value="${item}"> ${item}</label><input type="text" placeholder="補充（可不填）" style="display:none">`;
+    div.querySelector('input[type="checkbox"]').addEventListener('change', (e) => {
+      div.querySelector('input[type="text"]').style.display = e.target.checked ? 'inline-block' : 'none';
+    });
+  }
 
       sectionDiv.appendChild(div);
     });
@@ -143,10 +154,12 @@ function getSectionText(title) {
     const val = checkbox.value;
     const note = i.querySelector('input[type="text"]').value.trim();
     if (val === "其他") {
-      return note || "其他";
-    } else {
-      return note ? `${val}（${note}）` : val;
-    }
+    return note || "其他";
+  } else if (val === "鬆動關節") {
+    return note ? `鬆動${note}關節` : "鬆動關節";
+  } else {
+    return note ? `${val}（${note}）` : val;
+  }
   });
 }
 
