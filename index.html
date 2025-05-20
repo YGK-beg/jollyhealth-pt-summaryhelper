@@ -97,7 +97,7 @@ blocks.forEach(block => {
     const sectionDiv = document.createElement("div");
     sectionDiv.className = "section";
 
-    const requiredSections = ["建議處理時間(必填)", "基本資料", "客戶主訴"];
+    const requiredSections = ["建議處理時間(必填)", "基本資料", "客戶主訴", "下次處理方向"];
     sectionDiv.style.display = requiredSections.includes(sectionTitle) ? "block" : "none";
 
     h3.onclick = () => {
