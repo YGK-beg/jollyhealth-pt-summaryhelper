@@ -247,6 +247,7 @@ function generate() {
   if (process.length) result += `🔺 本次處理內容：\n${process.join('\n')}\n\n`;
  
   const home = [];
+  if (g("放鬆*")?.length) home.push(`- 放鬆：${g("放鬆*").join('、')}`);
  if (g("伸展*")?.length) home.push(`- 伸展：${g("伸展*").join('、')}`);
   if (g("訓練*")?.length) home.push(`- 肌力訓練：${g("訓練*").join('、')}`);
   if (g("其他*")?.length) home.push(`- ${g("其他*").join('、')}`);
